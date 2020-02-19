@@ -1,0 +1,12 @@
+---
+apiVersion: config.openshift.io/v1
+kind: Build
+metadata:
+  name: cluster
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  buildDefaults:
+    imageLabels:
+    - name: preprodbuild
+      value: "true"
