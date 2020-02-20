@@ -1,0 +1,58 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: dgoodwin-dev-t6drv
+  name: dgoodwin-dev-t6drv-additional-compute
+  namespace: openshift-machine-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: dgoodwin-dev-t6drv
+      machine.openshift.io/cluster-api-machine-role: worker
+      machine.openshift.io/cluster-api-machine-type: worker
+      machine.openshift.io/cluster-api-machineset: dgoodwin-dev-t6drv-worker-us-east-1f
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: dgoodwin-dev-t6drv
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: dgoodwin-dev-t6drv-worker-us-east-1f
+    spec:
+      providerSpec:
+        value:
+          ami:
+            id: ami-046fe691f52a953f9
+          apiVersion: awsproviderconfig.openshift.io/v1beta1
+          blockDevices:
+          - ebs:
+              iops: 100
+              volumeSize: 22
+              volumeType: gp2
+          credentialsSecret:
+            name: aws-cloud-credentials
+          deviceIndex: 0
+          iamInstanceProfile:
+            id: dgoodwin-dev-t6drv-worker-profile
+          instanceType: m4.large
+          kind: AWSMachineProviderConfig
+          placement:
+            availabilityZone: us-east-1f
+            region: us-east-1
+          securityGroups:
+          - filters:
+            - name: tag:Name
+              values:
+              - dgoodwin-dev-t6drv-worker-sg
+          subnet:
+            filters:
+            - name: tag:Name
+              values:
+              - dgoodwin-dev-t6drv-private-us-east-1f
+          tags:
+          - name: kubernetes.io/cluster/dgoodwin-dev-t6drv
+            value: owned
+          userDataSecret:
+            name: worker-user-data
